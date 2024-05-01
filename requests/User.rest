@@ -1,0 +1,31 @@
+### GET USERS
+
+GET http://localhost:3009/api/users/
+
+### LOGIN
+
+POST http://localhost:3009/api/users/login
+Content-Type: application/json
+
+{
+  "email": "babybears.tallinn@gmail.com",
+  "password": "clemens"
+}
+### clemens.a.janes@gmail.com
+
+
+### CREATE USER
+
+POST http://localhost:3009/api/users
+Content-Type: application/json
+
+{
+  "name": "babybears",
+  "email": "babybears.tallinn@gmail.com"
+}
+
+### DELETE USER
+
+DELETE http://localhost:3009/api/users/663120de4bb53e7ba8f8fb4d
+
+###
