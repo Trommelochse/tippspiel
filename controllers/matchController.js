@@ -4,7 +4,7 @@ const User = require('../models/User');
 const { calculatePoints, determineWinner } = require('./utils');
 
 const getMatches = async (req, res) => {
-  const matches = await Match.find();
+  const matches = await Match.find().populate('matchPredictions');
   res.json(matches);
 };
 

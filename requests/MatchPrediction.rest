@@ -6,10 +6,10 @@ POST http://localhost:3009/api/matchPredictions
 Content-Type: application/json
 
 {
-  "goalsHome": 1,
-  "goalsAway": 2,
-  "user": "6633afdef001bfa3edb2396c",
-  "match": "6633afdef001bfa3edb23972"
+  "goalsHome": 3,
+  "goalsAway": 0,
+  "user": "6633df7f1bb139263970426d",
+  "match": "6633df7f1bb1392639704279"
 }
 
 ###

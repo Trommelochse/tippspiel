@@ -1,5 +1,6 @@
 const MatchPrediction = require('../models/MatchPrediction');
 const User = require('../models/User');
+const Match = require('../models/Match');
 
 const { calculatePoints, determineWinner } = require('./utils')
 
@@ -22,19 +23,31 @@ const createMatchPrediction = async (req, res) => {
   const existingUser = await User
     .findById(user)
     .populate('matchPredictions');
-  if (!existingUser) {
-    console.log('User not found');
-    return res.status(404).json({ error: 'User not found' });
-  }
-  if (existingUser.matchPredictions.find(mp => mp.match.toString() === match)) {
-    return res.status(400).json({ error: 'Match prediction already exists' });
-  }
+  
+    if (!existingUser) {
+      console.log('User not found');
+      return res.status(404).json({ error: 'User not found' });
+    }
+    if (existingUser.matchPredictions.find(mp => mp.match.toString() === match)) {
+      return res.status(400).json({ error: 'Match prediction already exists' });
+    }
+    const existingMatch = await Match
+      .findById(match)
+
+    if (!existingMatch) {
+      return res.status(404).json({ error: 'Match not found' });
+    }
 
   const winner = determineWinner(goalsHome, goalsAway);
   const matchPrediction = new MatchPrediction({ goalsHome, goalsAway, winner, match, user });
   await matchPrediction.save();
+  
+  // Add matchPrediction to user and match
   existingUser.matchPredictions = existingUser.matchPredictions.concat(matchPrediction);
   await existingUser.save();
+  existingMatch.matchPredictions = existingMatch.matchPredictions.concat(matchPrediction);
+  await existingMatch.save();
+
   res.status(201).json(matchPrediction);
 };
 
