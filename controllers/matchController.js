@@ -45,13 +45,16 @@ const scoreMatch = async (req, res) => {
   const matchPredictions = await MatchPrediction.find({ match });
   for (const prediction of matchPredictions) {
     const user = await User.findById(prediction.user);
-    const points = calculatePoints(prediction, match);
+    const points = calculatePoints(prediction, match.result);
+    console.log('Points:', points);
     prediction.points = points;
     user.points += points;
     prediction.hasBeenScored = true;
     await prediction.save();
     await user.save();
   }
+
+  res.sendStatus(200);
 };
 
 const deleteMatch = async (req, res) => {

@@ -14,7 +14,16 @@ Content-Type: application/json
   "startTime": "2024-06-14T19:00:00Z"
 }
 
-### DELETE Match
+### SCORE MATCH
+POST http://localhost:3009/api/matches/663359480981178e4d94003e/score
+Content-Type: application/json
+
+{
+  "goalsHome": 2,
+  "goalsAway": 1
+}
+
+### DELETE MATCH
 
 DELETE http://localhost:3009/api/matches/663120de4bb53e7ba8f8fb4d
 
