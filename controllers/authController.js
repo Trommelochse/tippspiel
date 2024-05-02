@@ -59,6 +59,22 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const recalculatePoints = async (req, res) => {
+  const { id } = req.params;
+  const user = await User
+    .findById(id)
+    .populate('matchPredictions');
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  const points = user.matchPredictions.reduce((acc, mp) => {
+    return acc + mp.points;
+  }, 0);
+  user.points = points;
+  await user.save();
+  res.json(user);
+}
+
 const login = async (req, res) => {
   const { email, password } = req.body;
   // duh...
@@ -79,5 +95,6 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  recalculatePoints,
   login,
 };
