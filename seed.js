@@ -55,7 +55,7 @@ const data = {
   ]
 };
 
-const seed = async () => {
+const seed = async ({ predict = true }) => {
 
   const determineWinner = (goalsHome, goalsAway) => {
     return goalsHome > goalsAway ? 'home' : goalsHome < goalsAway ? 'away' : 'draw';
@@ -77,9 +77,16 @@ const seed = async () => {
     await Match.deleteMany();
     const matches = await Match.insertMany(data.matches);
     console.log(`Seeded ${matches.length} matches`);
-
+    
     await MatchPrediction.deleteMany();
 
+    
+    if (!predict) {
+      console.log('Data import successful');
+      await mongoose.connection.close();
+      return;
+    }
+    
     const randomBetween = (min, max) => {
       return Math.floor(Math.random() * (max - min + 1) + min);
     };
@@ -107,7 +114,6 @@ const seed = async () => {
     }
 
     console.log(`Seeded ${matchPredictions.length} match predictions`);
-
     console.log('Data import successful');
 
     await mongoose.connection.close();
@@ -118,4 +124,5 @@ const seed = async () => {
   } 
 };
 
-seed();
+
+seed({ predict: false});

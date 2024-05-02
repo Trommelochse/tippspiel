@@ -1,0 +1,15 @@
+GET http://localhost:3009/api/matchPredictions
+
+###
+
+POST http://localhost:3009/api/matchPredictions
+Content-Type: application/json
+
+{
+  "goalsHome": 1,
+  "goalsAway": 2,
+  "user": "6633afdef001bfa3edb2396c",
+  "match": "6633afdef001bfa3edb23972"
+}
+
+###

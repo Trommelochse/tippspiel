@@ -13,11 +13,13 @@ app.use(morgan('dev'));
 
 const userRouter = require('./routes/userRouter');
 const matchRouter = require('./routes/matchRouter');
+const matchPredictionRouter = require('./routes/matchPredictionRouter');
 
 
 // API routes
 app.use('/api/users', userRouter);
 app.use('/api/matches', matchRouter);
+app.use('/api/matchPredictions', matchPredictionRouter);
 
 
 // 404

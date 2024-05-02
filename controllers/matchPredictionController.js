@@ -1,4 +1,5 @@
-const MatchPrediction = require('./models/MatchPrediction');
+const MatchPrediction = require('../models/MatchPrediction');
+const User = require('../models/User');
 
 const { calculatePoints, determineWinner } = require('./utils')
 
@@ -18,9 +19,22 @@ const getMatchPrediction = async (req, res) => {
 
 const createMatchPrediction = async (req, res) => {
   const { match, user, goalsHome, goalsAway } = req.body;
+  const existingUser = await User
+    .findById(user)
+    .populate('matchPredictions');
+  if (!existingUser) {
+    console.log('User not found');
+    return res.status(404).json({ error: 'User not found' });
+  }
+  if (existingUser.matchPredictions.find(mp => mp.match.toString() === match)) {
+    return res.status(400).json({ error: 'Match prediction already exists' });
+  }
+
   const winner = determineWinner(goalsHome, goalsAway);
   const matchPrediction = new MatchPrediction({ goalsHome, goalsAway, winner, match, user });
   await matchPrediction.save();
+  existingUser.matchPredictions = existingUser.matchPredictions.concat(matchPrediction);
+  await existingUser.save();
   res.status(201).json(matchPrediction);
 };
 
@@ -31,28 +45,6 @@ const updateMatchPrediction = async (req, res) => {
     return res.status(404).json({ error: 'MatchPrediction not found' });
   }
   res.json(matchPrediction);
-};
-
-const scoreMatchPrediction = async (req, res) => {
-  const { id } = req.params;
-  const matchPrediction = await MatchPrediction
-    .findById(id)
-    .populate('user')
-    .populate('match');
-  if (!matchPrediction) {
-    return res.status(404).json({ error: 'MatchPrediction not found' });
-  }
-  
-  const user = matchPrediction.user;
-  const match = matchPrediction.match;
-  const points = calculatePoints(matchPrediction, match);
-  matchPrediction.points = points;
-  user.points += points;
-  matchPrediction.hasBeenScored = true;
-
-  const updatedMatchPrediction = await matchPrediction.save();
-  await user.save();
-  res.json(updatedMatchPrediction);
 };
 
 const deleteMatchPrediction = async (req, res) => {
@@ -66,6 +58,5 @@ module.exports = {
   getMatchPrediction,
   createMatchPrediction,
   updateMatchPrediction,
-  scoreMatchPrediction,
   deleteMatchPrediction
 }
