@@ -4,7 +4,9 @@ const jwt = require('jsonwebtoken');
 // Get all users
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User
+      .find()
+      .populate('matchPredictions');
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -14,7 +16,9 @@ const getUsers = async (req, res) => {
 const getUser = async (req, res) => {
   const { id } = req.params;
   try {
-    const user = await User.findById(id);
+    const user = await User
+      .findById(id)
+      .populate('matchPredictions');
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -81,7 +85,9 @@ const login = async (req, res) => {
   if (password !== 'clemens') {
     return res.status(401).json({ error: 'Invalid password' });
   }
-  const user = await User.findOne({ email });
+  const user = await User
+    .findOne({ email })
+    .populate('matchPredictions');
   if (!user) {
     return res.status(404).json({ error: 'User not found' });
   }
